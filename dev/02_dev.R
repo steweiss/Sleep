@@ -56,7 +56,8 @@ usethis::use_package("shinyTime")
 # 
 # ## Add helper functions ----
 # ## Creates ftc_* and utils_*
-# golem::add_fct( "helpers" ) 
+golem::add_fct( "helpers" ) 
+golem::add_fct( "fourier")
 # golem::add_utils( "helpers" )
 # 
 # ## External resources

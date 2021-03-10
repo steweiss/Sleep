@@ -8,8 +8,12 @@
 
 library(shiny)
 library(knitr)
-rmdfiles <- c("D:/Users/royde/Nextcloud/Studium/Mathematik/Bachelorarbeit/Sleep/R/Dashboard.Rmd")
-sapply(rmdfiles, knit, quiet = T)
+# rmdfiles <- c("D:/Users/royde/Nextcloud/Studium/Mathematik/Bachelorarbeit/Sleep/R/Dashboard.Rmd")
+# sapply(rmdfiles, knit, quiet = T)
+# rmarkdown::render(
+#   input = "D:/Users/royde/Nextcloud/Studium/Mathematik/Bachelorarbeit/Sleep/R/Dashboard.Rmd",runtime="shiny")
+
+
 
 app_ui <- function(request) {
   tagList(
@@ -17,9 +21,12 @@ app_ui <- function(request) {
     golem_add_external_resources(),
     # Your application UI logic 
     fluidPage(
-      withMathJax(includeMarkdown("Dashboard.md"))
+      rmarkdown::run("D:/Users/royde/Nextcloud/Studium/Mathematik/Bachelorarbeit/Sleep/R/Dashboard.Rmd", shiny_args = list(port = 3838, host = "0.0.0.0"))
+      
+      # includeHTML("D:/Users/royde/Nextcloud/Studium/Mathematik/Bachelorarbeit/Sleep/R/Dashboard.html")
+      # withMathJax(includeMarkdown("Dashboard.md")
+                  )
     )
-  )
 }
 
 #' Add external Resources to the Application

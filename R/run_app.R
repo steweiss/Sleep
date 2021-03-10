@@ -13,13 +13,17 @@ run_app <- function(
   ...
 ) {
   with_golem_options(
-    app = shinyApp(
-      ui = app_ui,
-      server = app_server,
-      onStart = onStart,
-      options = options, 
-      enableBookmarking = enableBookmarking
-    ), 
+    app = rmarkdown::run("D:/Users/royde/Nextcloud/Studium/Mathematik/Bachelorarbeit/Sleep/R//Dashboard.Rmd", shiny_args = list(port = 3838, host = "0.0.0.0"))
+      
+      
+    #   shinyApp(
+    #   ui = app_ui,
+    #   server = app_server,
+    #   onStart = onStart,
+    #   options = options, 
+    #   enableBookmarking = enableBookmarking
+    # )
+    , 
     golem_opts = list(...)
   )
 }

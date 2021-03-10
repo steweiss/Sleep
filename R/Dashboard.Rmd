@@ -4,14 +4,6 @@ output:
   flexdashboard::flex_dashboard:
     storyboard: TRUE
     always_allow_html: yes
-  pdf_document:
-    classoption: landscape
-    documentclass: ar-1col
-    header-includes: \usepackage{fancyhdr,tabu, courier,chngcntr,longtable, graphicx,float,natbib,geometry}
-    keep_tex: TRUE
-    fig_caption: yes
-    number_sections: yes
-    always_allow_html: yes
 runtime: shiny
 ---
 
@@ -145,7 +137,7 @@ if(outputoption!="html"){
 
 ```{r,define_functions}
 #py_install(c("py-ecg-detectors","yasa","explorepy"),pip=T)
-reticulate::source_python(paste0(mainDir,"/EEG.py"))
+# reticulate::source_python(paste0(mainDir,"/EEG.py"))
 # source(paste0(mainDir,"/helpers.R"))
 # source(paste0(mainDir,"/ui.R"))
 # source(paste0(mainDir,"/fixed_frequency.R"))
@@ -154,247 +146,432 @@ reticulate::source_python(paste0(mainDir,"/EEG.py"))
 
 ```
 
-
-<!-- <!-- \lhead{MentaLab's Signal Evaluation \linebreak {\leftmark}  } --> -->
-
-<!-- \clearpage -->
-
-<!-- <!-- ### Signal Source --> -->
+```{r}
 
 
-<!-- <!-- \begin{tcolorbox}[colback=lhi!30,%gray background --> -->
-<!-- <!--                 colframe=lhi!60,% black frame colour --> -->
-<!-- <!--                 arc=1mm, auto outer arc,] --> -->
-<!-- <!-- MentaLab's Signal Evaluation employes recent signal processing tools, to evaluate ECG and EEG data.     --> -->
-<!-- <!-- Furthermore it holds relevant citation and customizable output formats.     --> -->
-<!-- <!-- It is extandable by Python and R data analysis methods and curated by professional biostatisticians and medical experts.     --> -->
-<!-- <!-- \end{tcolorbox} --> -->
-
-<!-- ### Input - data is assumed to be in Voltage and will be converted based on biosource, initial rounding to one microvolt. -->
-<!-- <!-- {.sidebar} --> -->
-
-<!-- ```{r} -->
 
 
-<!-- if(shiny_running()){ -->
-<!--   output$dygraph<- -->
-<!--     renderDygraph({ -->
-<!--       # if(Disp$newfile){ -->
-<!--       #     d<-dygraph(ExG$disp) %>% dyAxis("y", label = "Electric Potential (EEG-uV / E(CMO)G-mV)",valueRange=c(-50,50)) %>% -->
-<!--       #       dyRangeSelector(height = 90,retainDateWindow=F) %>%  -->
-<!--       #     dyOptions(axisLineWidth = 1.5, drawGrid = FALSE) %>% -->
-<!--       #       dyLegend(show = "never") -->
-<!--       #     Disp$newfile=F -->
-<!--       # }else{ -->
-<!--         ## Seperate Channel by normalizing to IQR and adding a positional vector -"the matrix" -->
-<!--         d<-dygraph(Disp$disp) %>% dyAxis("y", label = "Electric Potential (V)",valueRange=c(-50,50)) %>% -->
-<!--           dyRangeSelector(height = 90,retainDateWindow=!(Disp$newfile)) %>% dyLegend(show = "never") %>%  -->
-<!--           dyOptions(axisLineWidth = 1.5, drawGrid = FALSE,connectSeparatedPoints=T) %>% dyCallbacks(  -->
-<!--             annotationClickHandler=  -->
-<!--           "function(ann, point, dg, event){ -->
-<!--           ann.div.style.backgroundColor =  '#ddd'; -->
-<!--           var message=ann.text; -->
-<!--           Shiny.onInputChange('downRater',0); -->
-<!--           Shiny.setInputValue('downRater',message);}") -->
-<!--     #} -->
-<!--     if("Bandpower" %in% input$disp_event){ -->
-<!--       # Take Bandpower columns - always last ones -->
-<!--       dn<-colnames(ExG$disp)[(ncol(ExG$disp)-4):(ncol(ExG$disp))] -->
-<!--         for(i in 1:length(dn)){ -->
-<!--           #display them on other y axis -->
-<!--           d<-d %>% dySeries(dn[i], axis = 'y2',stepPlot = F, -->
-<!--                    color=c("#bcbddc","#9e9ac8","#807dba","#6a51a3","#4a1486")[i])%>%  -->
-<!--             dyAxis("y2", label = "Bandpower (%)",valueRange=c(0,100)) -->
-<!--         } -->
-<!--     } -->
-<!--     if("Stages" %in% input$disp_event){ -->
-<!--       for(i in 1:(nrow(ExG$stages))){ -->
-<!--         if(any(ExG$stages[i,1] %in% c("W","S1","S2","S3","REM","A") )){ -->
-<!--           ## Get the closest index value of the displayed time series -->
-<!--           ## Write the annotation there - otherwise does not show an annotation bc timestamp might be missing -->
-<!--             d= d %>% dyAnnotation(index(ExG$disp)[ -->
-<!--               which(abs(index(ExG$disp)-ExG$stages[i,2])==min(abs(index(ExG$disp)-ExG$stages[i,2])))], -->
-<!--               text=ExG$stages[i,1],attachAtBottom =T,tooltip = as.character(i),width=30,height=30) -->
-<!--           } -->
-<!--       } -->
-<!--     } -->
-<!--     if("Sleep Spindles" %in% input$disp_event){ -->
-<!--       for(i in 1:(nrow(ExG$spindles))){ -->
-<!--         ## same as above, closest existing timestamp, events are the Sleep Spindles only atm -->
-<!--         d= d %>% dyAnnotation(index(ExG$disp)[ -->
-<!--           which(abs(index(ExG$disp)-ExG$spindles[i,2])==min(abs(index(ExG$disp)-ExG$spindles[i,2])))], -->
-<!--           text="Sp",width=20,height=20) -->
-<!--       } -->
-<!--     } -->
-<!--       if("QRS-Complex" %in% input$disp_event){ -->
-<!--       for(i in 1:(nrow(ExG$qrs))){ -->
-<!--         ## same as above, closest existing timestamp, events are the Sleep Spindles only atm -->
-<!--         d= d %>% dyAnnotation(index(ExG$disp)[ -->
-<!--           which(abs(index(ExG$disp)-ExG$qrs[i,2])==min(abs(index(ExG$disp)-ExG$qrs[i,2])))], -->
-<!--           text="QRS",width=20,height=20) -->
-<!--       } -->
-<!--         } -->
-<!--     d -->
-<!--   }) -->
-<!-- } -->
-
-<!-- ### FIRST PANEL UI ELEMENTS PLACEMENT -->
-<!-- if(shiny_running()){ -->
-<!--   fillCol( -->
-<!--     fillRow( -->
-<!--       actionButton("upload","Upload new Data ... "), -->
-<!--         renderUI({ -->
-<!--           chansels=colnames(ExG$ts) -->
-<!--           pickerInput( -->
-<!--           inputId = "disp_chan", -->
-<!--           choices =chansels, -->
-<!--           options = list(title = "Channels", -->
-<!--                          `actions-box` = TRUE,size = 8,`selected-text-format` = "count > 3"), -->
-<!--           multiple = TRUE -->
-<!--           ) -->
-<!--         }), -->
-<!--         pickerInput( -->
-<!--           inputId = "disp_event", -->
-<!--           choices = c("Bandpower","Stages","Sleep Spindles","QRS-Complex"), -->
-<!--           options = list(title = "Events", -->
-<!--                          `actions-box` = TRUE,size = 8,`selected-text-format` = "count > 3"), -->
-<!--           multiple = TRUE -->
-<!--           ), -->
-<!--         renderUI({ -->
-<!--           sel_choices=colnames(ExG$rssa) -->
-<!--           pickerInput( -->
-<!--             inputId = "disp_ssa", -->
-<!--             choices = sel_choices, -->
-<!--             options = list(title = "Clusters", -->
-<!--                            `actions-box` = TRUE,size = 8,`selected-text-format` = "count > 3"), -->
-<!--           multiple = TRUE -->
-<!--           ) -->
-<!--         }),flex=c(1,2,2,2)), -->
-<!--     ### INPUTS FINISHED -> NEXT COLUMN: GRPAHIC -->
-<!--     dygraphOutput("dygraph") -->
-<!--     ,flex = c(1,10)) -->
-<!-- } -->
 
 
-<!-- ### FOR PDF -->
-<!-- # if(!shiny_running()){ -->
-<!-- #   ## STATIC DISPLAY HYPNOGRAM -->
-<!-- #   # it's W, REM, S1, S2, S3, -->
-<!-- #   # d=data.frame(x=c(1,2,4,5,7,8,9), y=c(1,2,3,5,6,7,9)) -->
-<!-- #   d=ExG$stages -->
-<!-- #   d[,1]=factor(d[,1],levels = c("S3","S2","S1","REM","W","A")) -->
-<!-- #   colnames(d)=c("y","x") -->
-<!-- # ggplot() + -->
-<!-- # geom_step(data=d, mapping=aes(x=x, y=y),group=1)+theme_classic() -->
-<!-- # } -->
+init.Date=as.POSIXct(paste(Sys.Date(),strftime(Sys.time(), format = "%H:%M")),tz="CET")
+init.srate<<-100
+## assume the x-axis of a lorenz attractor of ~ about 3 hours is the EEG for start
+init.ExG=lorenz(sigma = 10, beta = 8/3, rho = 28,
+                start = c(5, 5, 5), time = seq(0, 10000, by = 0.01),
+                do.plot = F)
+init.ExG=data.frame(Fp1=init.ExG[["x"]],F1=init.ExG[["y"]],C3=init.ExG[["z"]])
 
-<!-- ``` -->
+## 100 datapoints per second
+init.channels<<-colnames(init.ExG)
+# init.ExG=import_raw("/srv/shiny-server/UItest/EDF/Stefan W, 32 yo, Apnoe, no Medication_.edf")[,-1]
+# init.ExG=fread("D:/Users/royde/Nextcloud/Arbeit/MentaLab/EEG/02_Data Management/control_records/05.03.2020/DATA012_eeg.csv")
+# init.ExG=round(init.ExG[,-1],5)
+# init.srate=init.ExG[["srate"]]
+# init.ExG=round(data.frame(init.ExG[["signals"]]),0)
+
+init.freq_filter.temp=init.ExG
+colnames(init.freq_filter.temp)<-paste0("Filtered",colnames(init.freq_filter.temp))
+init.freq_filter<-xts(init.freq_filter.temp,
+                         seq(init.Date,
+                             by=1/init.srate,
+                             length=nrow(init.freq_filter.temp))
+                         )
+
+init.bandpower<-rel_bp(init.freq_filter.temp[,1])
+init.freq.bandpower<-as.xts((init.bandpower[,1:5]/init.bandpower[,6])*100,
+                            seq(init.Date, by=30, length=nrow(init.bandpower)))
+
+init.stages=data.frame(
+  "Sleep State (W, S1, S2, S3, REM)"=c("W"),
+  "Time (xx:xx or xx:xx:xx)"=as.POSIXct("2020-03-02 23:50:00"),
+  stringsAsFactors = F)
+
+init.band_comp <- data.frame(
+  x = c(),
+  y = c(),
+  label = c()
+)
+
+# init.stages=data.frame(
+#   "Sleep State (W, S1, S2, S3, REM)"=c("W"),
+#   "Time (xx:xx or xx:xx:xx)"=as.POSIXct("2020-03-03 23:55:00"),
+#                        stringsAsFactors = F)
+
+# init.stages=data.frame("Sleep State (W, S1, S2, S3, REM)"=c("W","S1","S2"),"Time (xx:xx or xx:xx:xx)"=c("00:08","00:30","01:02"),stringsAsFactors = F)
+
+# init.stages=data.frame("Stage / Event" = rep("Stage",3),
+#                        "Sleep State (W, S1, S2, S3, REM)"=c("W","S1","S2"),
+#                        "Time (xx:xx or xx:xx:xx)"=c("00:08","00:30","01:02"),
+#                        stringsAsFactors = F)
+
+## For Visual Display only, optimization routine for quick display
 
 
-<!-- ```{r,file_observer} -->
-<!-- ## Include Export and Import Options, funcitons is faulty -->
-<!-- ## DATA upload actions, currently only EDF and csv -->
-<!-- if(shiny_running()){ -->
-<!-- observeEvent(input$static_data,{ -->
-<!--       if(any(grepl(".edf",input$static_data))){ -->
-<!--         tmp=import_raw(input$static_data$datapath) -->
-<!--         #tmp=import_raw(paste0(mainDir,"/Data/slp03.edf")) -->
-<!--         ExG$srate=tmp[["srate"]] -->
-<!--         tmp=tmp[["signals"]]/1000 -->
-<!--         Disp$posix=as.POSIXct(paste(input$rec_date,input$rec_time),tz="CET") -->
-<!--         ExG$ts=as.xts(data.frame(tmp), -->
-<!--                       seq(Disp$posix,  -->
-<!--                           by=1/ExG$srate, length=nrow(data.frame(tmp)))) -->
 
-<!--       } -->
-<!--       if(any(grepl(".csv",input$static_data))){ -->
-<!--         tmp=round(data.frame(fread(input$static_data$datapath)[,-1]*1000),0) -->
-<!--         ExG$srate=as.numeric(input$srate) -->
-<!--         Disp$posix=as.POSIXct(paste(input$rec_date,input$rec_time),tz="CET") -->
-<!--         ExG$ts=as.xts(tmp, -->
-<!--                       seq(Disp$posix,  -->
-<!--                           by=1/ExG$srate, length=nrow(data.frame(tmp)))) -->
 
-<!--       } -->
-<!--       if(any(grepl(".BIN",input$static_data))){ -->
-<!--         #ExG$a=1 -->
-<!--         #file.copy(input$static_data$datapath,paste0(mainDir,"Data/")) -->
-<!--         py$import_explorepy(input$static_data$datapath) -->
-<!--         # file.copy(input$static_data$datapath,paste0(mainDir,"Data/")) -->
-<!--         tmp=fread(paste0(mainDir,"/0_exg.csv")) -->
-<!--         ExG$srate=as.numeric(input$srate) -->
-<!--         Disp$posix=as.POSIXct(paste(input$rec_date,input$rec_time),tz="CET") -->
-<!--         ExG$ts=as.xts(data.frame(tmp), -->
-<!--                        seq(Disp$posix,  -->
-<!--                            by=1/ExG$srate, length=nrow(data.frame(tmp)))) -->
 
-<!--       } -->
-<!--       # get column names -->
+## Singular Spectrum Analysis initial call
+# tmp=round(downsample(window(init.freq_filter,start=first(index(init.freq_filter)),end=(first(index(init.freq_filter))+60*5)),10),6)
 
-<!--       graph_data$nodes=update_nodes(base.nodes,tmp) -->
-<!--       biosigs=subset(graph_data$nodes,group=="biological") -->
-<!--       physigs=subset(graph_data$nodes,group=="physical") -->
-<!--       digsigs=subset(graph_data$nodes,group=="digital") -->
-<!--       # -->
+#}
 
-<!--       graph_data$edges=setNames(data.frame(matrix(ncol = 3, nrow = 0)), c("from", "to","id")) -->
-<!--       ExG$freq=ExG$ts -->
-<!--       colnames(ExG$freq)=paste0("Filtered",colnames(ExG$ts)) -->
-<!--       Disp$orig.chan=downsample(ExG$freq,60*15) -->
-<!--       Disp$orig.ssa=downsample(ExG$freq,60*15) -->
-<!--       Disp$orig.disp=downsample(ExG$freq,60*15) -->
-<!--       ExG$disp=downsample(ExG$freq,60*15) -->
-<!--       Disp$newfile=T -->
-<!--       ExG$stages= -->
-<!--         data.frame( -->
-<!--   "Sleep State (W, S1, S2, S3, REM)"=c("W"), -->
-<!--   "Time (xx:xx or xx:xx:xx)"=as.POSIXct(Disp$posix), -->
-<!--                        stringsAsFactors = F) -->
 
-<!--       # -->
-<!--       # Disp$orig.disp=tmp -->
-<!--       # ## reset UI elements below -->
-<!--       # Disp$sight="bird" -->
-<!--        a=first(index(ExG$freq)) -->
-<!--        b=last(index(ExG$freq)) -->
-<!--       # tmp=downsample(window(Disp$orig.disp,start=a,end=b),250*60) -->
-<!--        Disp$resol=c(a,b) -->
-<!--       # ExG$disp=tmp -->
-<!--       # Disp$newfile=T -->
-<!--     ExG$stages=data.frame("Sleep State (A, W, S1, S2, S3, REM)"="W", -->
-<!--                         "Time (xx:xx or xx:xx:xx)"=first(seq(Disp$posix,by=1/ExG$srate,length=nrow(ExG$ts))), -->
-<!--                         stringsAsFactors = F) -->
-<!--     graph_data$EEG=findexg(graph_data$nodes,graph_data$edges,1) -->
-<!--       graph_data$ECG=findexg(graph_data$nodes,graph_data$edges,2) -->
-<!--       graph_data$EOG=findexg(graph_data$nodes,graph_data$edges,3) -->
-<!--       graph_data$EMG=findexg(graph_data$nodes,graph_data$edges,4) -->
-<!--   }) -->
+  ## Reactive Environment for graph network
 
-<!-- # observeEvent(input$srate,{ -->
-<!-- #   ExG$srate=input$srate -->
-<!-- # }) -->
-<!-- } -->
+  
+  ExG<-reactiveValues(
+    ts=as.xts(init.ExG,seq(init.Date, by=1/init.srate, length=nrow(init.ExG))),
+    srate=init.srate,
+    channels=init.channels,
+    freq=init.freq_filter,
+    bandpower=data.frame(),
+    stages=init.stages
+  )
+  base.nodes<<-data.frame(
+    id = c(1:7),
+    label=c("EEG","ECG","EOG","EMG","Notch","High Pass","Low Pass"),
+    group=c(rep("biological",4),rep("digital",3)),stringsAsFactors = F)
+  
+  init.nodes<<-update_nodes(base.nodes,init.ExG)
+  biosigs<-subset(init.nodes,group=="biological")
+  physigs<-subset(init.nodes,group=="physical")
+  digsigs<-subset(init.nodes,group=="digital")
+  
+  init.edges=data.frame(from = physigs$id[5:8], to = biosigs$id[1])
+  init.edges<-rbind(init.edges,data.frame(from = physigs$id[1], to = biosigs$id[1:3]))
+  init.edges$id<-1:nrow(init.edges)
+  init.edges$title=""
+  init.edges$value=1
+  
+  
+  init.eeg.fits=findexg(init.nodes,init.edges,1)
+  init.ecg.fits=findexg(init.nodes,init.edges,2)
+  init.eog.fits=findexg(init.nodes,init.edges,3)
+  init.emg.fits=findexg(init.nodes,init.edges,4)
+  
+  
+  graph_data <- reactiveValues(
+    nodes = init.nodes,
+    edges=init.edges,
+    EEG=init.eeg.fits,
+    ECG=init.ecg.fits,
+    EOG=init.eog.fits,
+    EMG=init.emg.fits
+  )
+  
+  init.orig.chan=init.freq_filter[,paste0("Filtered",physigs[["label"]])]
+  init.orig.ssa=init.orig.chan
+  init.orig.disp=init.orig.chan
+  
+  
+  ## dangerously wrong
+  init.disp=downsample(init.freq_filter[,paste0("Filtered",physigs[["label"]])],init.srate*60)
+  init.resol=c(first(index(init.freq_filter)),last(index(init.freq_filter)))
 
-<!-- if(shiny_running()){ -->
-<!-- observeEvent(input$upload,{ -->
-<!--   showModal(modalDialog( -->
-<!--     dateInput("rec_date", label="Start Date", value = NULL, min = NULL, max = NULL, -->
-<!--   format = "yyyy-mm-dd", startview = "month", weekstart = 0, -->
-<!--   language = "en", width = NULL, autoclose = TRUE, -->
-<!--   datesdisabled = NULL, daysofweekdisabled = NULL), -->
-<!--   textInput("rec_time", "Start Time (xx:xx or xx:xx:xx)", value = strftime(Sys.time(), format = "%H:%M"), width = NULL, -->
-<!--   placeholder = NULL), -->
-<!--   numericInput("srate","Sampling Frequency",value=250,min=1,max=1000), -->
-<!--   fileInput("static_data", "Upload Data (EDF/CSV/BIN):", multiple = F, accept = c(".csv",".edf",".BIN"), -->
-<!--       width = NULL, buttonLabel = "Browse...", -->
-<!--       placeholder = "No file selected"), -->
-<!--   renderTable(head(ExG$ts)),size="l" -->
-<!--   ) -->
-<!-- ) -->
-<!-- }) -->
-<!-- } -->
+   # dt=tmp[,paste0("Filtered",physigs[["label"]][1])]
+   # dt=dt[-length(dt)]
+   # L1 = 30*250
+   # H = matrix(0L, L1, length(dt)-L1);
+   # H[1,]=dt[1:(length(dt)-L1)]
+   # for(k in 2:L1){
+   #   # print(k)
+   #   # print(length(dt[k:(length(dt)-k+1)]))
+   #   H[k,]=dt[k:(length(dt)+k-L1-1)]
+   #   
+   #   #H[k,-(0:(k-1))] = dt[1:(length(dt)+k-1-L1)]
+   # }
+  # # H = H((L):end,:);
+  # # H=transpose(H);
+  # 
+  # DUV=propack.svd(H, neig = 50, opts = list())
+  # RDUV=rsvd::rsvd(H,k=50,q=15)
+  # RSSVD=RSpectra::svds(H,k=50)
+  # 
+  # 
+  # SDUV=ssa(tmp[,paste0("Filtered",physigs[["label"]][1])][-1],L=300,neig=50,kind="1d-ssa",svd.method="propack")
 
-<!-- ``` -->
+  tmp=downsample(init.freq_filter,10)
+  #tmp=init.freq_filter
+  init.ssa=ssa.svd(tmp[,paste0("Filtered",physigs[["label"]][1])],30*25,1,50)
+  
+  ## Update graph display, currently commented
+  #init.nodes=update_nodes_components(init.nodes,init.ssa)
+  init.ssa_g=grouping.ssa(init.ssa,g=1:(ncol(init.ssa$U)),nc=3)
+  
+  ## Update graph display, currently commented
+  #init.nodes=update_nodes_cluster(init.nodes,init.ssa_g)
+  #init.edges=update_edges_cluster(init.nodes,init.edges,init.ssa_g)
+  
+  ## Reconstruction, only for display, currently soft implemented only
+  init.recons=recons(init.ssa,init.ssa_g,stacked=F)
+  
+  Disp<-reactiveValues(
+    orig.chan=init.orig.chan,
+    orig.ssa=init.orig.chan,
+    orig.events=init.orig.chan,
+    orig.disp=init.orig.chan,
+    disp=init.orig.chan,
+    resol=c(first(init.freq_filter),last(init.freq_filter)),
+    posix=init.Date,
+    sight="time",
+    newfile=F,
+    ssa=init.ssa,
+    gssa=init.ssa_g,
+    rssa=init.recons,
+    events=data.frame(),
+    df_res=data.frame(),
+    df_res2=data.frame(),
+    pan=0,
+    hold=1,
+    a=0,
+    redat=F,
+    band_comp=init.band_comp
+    
+  )
+
+
+
+```
+<!-- \lhead{MentaLab's Signal Evaluation \linebreak {\leftmark}  } -->
+
+\clearpage
+
+<!-- ### Signal Source -->
+
+
+<!-- \begin{tcolorbox}[colback=lhi!30,%gray background -->
+<!--                 colframe=lhi!60,% black frame colour -->
+<!--                 arc=1mm, auto outer arc,] -->
+<!-- MentaLab's Signal Evaluation employes recent signal processing tools, to evaluate ECG and EEG data.     -->
+<!-- Furthermore it holds relevant citation and customizable output formats.     -->
+<!-- It is extandable by Python and R data analysis methods and curated by professional biostatisticians and medical experts.     -->
+<!-- \end{tcolorbox} -->
+
+### Input - data is assumed to be in Voltage and will be converted based on biosource, initial rounding to one microvolt.
+<!-- {.sidebar} -->
+
+```{r}
+
+
+if(shiny_running()){
+  output$dygraph<-
+    renderDygraph({
+      # if(Disp$newfile){
+      #     d<-dygraph(ExG$disp) %>% dyAxis("y", label = "Electric Potential (EEG-uV / E(CMO)G-mV)",valueRange=c(-50,50)) %>%
+      #       dyRangeSelector(height = 90,retainDateWindow=F) %>%
+      #     dyOptions(axisLineWidth = 1.5, drawGrid = FALSE) %>%
+      #       dyLegend(show = "never")
+      #     Disp$newfile=F
+      # }else{
+        ## Seperate Channel by normalizing to IQR and adding a positional vector -"the matrix"
+        d<-dygraph(Disp$disp) %>% dyAxis("y", label = "Electric Potential (V)",valueRange=c(-50,50)) %>%
+          dyRangeSelector(height = 90,retainDateWindow=!(Disp$newfile)) %>% dyLegend(show = "never") %>%
+          dyOptions(axisLineWidth = 1.5, drawGrid = FALSE,connectSeparatedPoints=T) %>% dyCallbacks(
+            annotationClickHandler=
+          "function(ann, point, dg, event){
+          ann.div.style.backgroundColor =  '#ddd';
+          var message=ann.text;
+          Shiny.onInputChange('downRater',0);
+          Shiny.setInputValue('downRater',message);}")
+    #}
+    if("Bandpower" %in% input$disp_event){
+      # Take Bandpower columns - always last ones
+      dn<-colnames(ExG$disp)[(ncol(ExG$disp)-4):(ncol(ExG$disp))]
+        for(i in 1:length(dn)){
+          #display them on other y axis
+          d<-d %>% dySeries(dn[i], axis = 'y2',stepPlot = F,
+                   color=c("#bcbddc","#9e9ac8","#807dba","#6a51a3","#4a1486")[i])%>%
+            dyAxis("y2", label = "Bandpower (%)",valueRange=c(0,100))
+        }
+    }
+    if("Stages" %in% input$disp_event){
+      for(i in 1:(nrow(ExG$stages))){
+        if(any(ExG$stages[i,1] %in% c("W","S1","S2","S3","REM","A") )){
+          ## Get the closest index value of the displayed time series
+          ## Write the annotation there - otherwise does not show an annotation bc timestamp might be missing
+            d= d %>% dyAnnotation(index(ExG$disp)[
+              which(abs(index(ExG$disp)-ExG$stages[i,2])==min(abs(index(ExG$disp)-ExG$stages[i,2])))],
+              text=ExG$stages[i,1],attachAtBottom =T,tooltip = as.character(i),width=30,height=30)
+          }
+      }
+    }
+    if("Sleep Spindles" %in% input$disp_event){
+      for(i in 1:(nrow(ExG$spindles))){
+        ## same as above, closest existing timestamp, events are the Sleep Spindles only atm
+        d= d %>% dyAnnotation(index(ExG$disp)[
+          which(abs(index(ExG$disp)-ExG$spindles[i,2])==min(abs(index(ExG$disp)-ExG$spindles[i,2])))],
+          text="Sp",width=20,height=20)
+      }
+    }
+      if("QRS-Complex" %in% input$disp_event){
+      for(i in 1:(nrow(ExG$qrs))){
+        ## same as above, closest existing timestamp, events are the Sleep Spindles only atm
+        d= d %>% dyAnnotation(index(ExG$disp)[
+          which(abs(index(ExG$disp)-ExG$qrs[i,2])==min(abs(index(ExG$disp)-ExG$qrs[i,2])))],
+          text="QRS",width=20,height=20)
+      }
+        }
+    d
+  })
+}
+
+### FIRST PANEL UI ELEMENTS PLACEMENT
+if(shiny_running()){
+  fillCol(
+    fillRow(
+      actionButton("upload","Upload new Data ... "),
+        renderUI({
+          chansels=colnames(ExG$ts)
+          pickerInput(
+          inputId = "disp_chan",
+          choices =chansels,
+          options = list(title = "Channels",
+                         `actions-box` = TRUE,size = 8,`selected-text-format` = "count > 3"),
+          multiple = TRUE
+          )
+        }),
+        pickerInput(
+          inputId = "disp_event",
+          choices = c("Bandpower","Stages","Sleep Spindles","QRS-Complex"),
+          options = list(title = "Events",
+                         `actions-box` = TRUE,size = 8,`selected-text-format` = "count > 3"),
+          multiple = TRUE
+          ),
+        renderUI({
+          sel_choices=colnames(ExG$rssa)
+          pickerInput(
+            inputId = "disp_ssa",
+            choices = sel_choices,
+            options = list(title = "Clusters",
+                           `actions-box` = TRUE,size = 8,`selected-text-format` = "count > 3"),
+          multiple = TRUE
+          )
+        }),flex=c(1,2,2,2)),
+    ### INPUTS FINISHED -> NEXT COLUMN: GRPAHIC
+    dygraphOutput("dygraph")
+    ,flex = c(1,10))
+}
+
+
+### FOR PDF
+# if(!shiny_running()){
+#   ## STATIC DISPLAY HYPNOGRAM
+#   # it's W, REM, S1, S2, S3,
+#   # d=data.frame(x=c(1,2,4,5,7,8,9), y=c(1,2,3,5,6,7,9))
+#   d=ExG$stages
+#   d[,1]=factor(d[,1],levels = c("S3","S2","S1","REM","W","A"))
+#   colnames(d)=c("y","x")
+# ggplot() +
+# geom_step(data=d, mapping=aes(x=x, y=y),group=1)+theme_classic()
+# }
+
+```
+
+
+```{r,file_observer}
+## Include Export and Import Options, funcitons is faulty
+## DATA upload actions, currently only EDF and csv
+if(shiny_running()){
+observeEvent(input$static_data,{
+      if(any(grepl(".edf",input$static_data))){
+        tmp=import_raw(input$static_data$datapath)
+        #tmp=import_raw(paste0(mainDir,"/Data/slp03.edf"))
+        ExG$srate=tmp[["srate"]]
+        tmp=tmp[["signals"]]/1000
+        Disp$posix=as.POSIXct(paste(input$rec_date,input$rec_time),tz="CET")
+        ExG$ts=as.xts(data.frame(tmp),
+                      seq(Disp$posix,
+                          by=1/ExG$srate, length=nrow(data.frame(tmp))))
+
+      }
+      if(any(grepl(".csv",input$static_data))){
+        tmp=round(data.frame(fread(input$static_data$datapath)[,-1]*1000),0)
+        ExG$srate=as.numeric(input$srate)
+        Disp$posix=as.POSIXct(paste(input$rec_date,input$rec_time),tz="CET")
+        ExG$ts=as.xts(tmp,
+                      seq(Disp$posix,
+                          by=1/ExG$srate, length=nrow(data.frame(tmp))))
+
+      }
+      if(any(grepl(".BIN",input$static_data))){
+        #ExG$a=1
+        #file.copy(input$static_data$datapath,paste0(mainDir,"Data/"))
+        py$import_explorepy(input$static_data$datapath)
+        # file.copy(input$static_data$datapath,paste0(mainDir,"Data/"))
+        tmp=fread(paste0(mainDir,"/0_exg.csv"))
+        ExG$srate=as.numeric(input$srate)
+        Disp$posix=as.POSIXct(paste(input$rec_date,input$rec_time),tz="CET")
+        ExG$ts=as.xts(data.frame(tmp),
+                       seq(Disp$posix,
+                           by=1/ExG$srate, length=nrow(data.frame(tmp))))
+
+      }
+      # get column names
+
+      graph_data$nodes=update_nodes(base.nodes,tmp)
+      biosigs=subset(graph_data$nodes,group=="biological")
+      physigs=subset(graph_data$nodes,group=="physical")
+      digsigs=subset(graph_data$nodes,group=="digital")
+      #
+
+      graph_data$edges=setNames(data.frame(matrix(ncol = 3, nrow = 0)), c("from", "to","id"))
+      ExG$freq=ExG$ts
+      colnames(ExG$freq)=paste0("Filtered",colnames(ExG$ts))
+      Disp$orig.chan=downsample(ExG$freq,60*15)
+      Disp$orig.ssa=downsample(ExG$freq,60*15)
+      Disp$orig.disp=downsample(ExG$freq,60*15)
+      ExG$disp=downsample(ExG$freq,60*15)
+      Disp$newfile=T
+      ExG$stages=
+        data.frame(
+  "Sleep State (W, S1, S2, S3, REM)"=c("W"),
+  "Time (xx:xx or xx:xx:xx)"=as.POSIXct(Disp$posix),
+                       stringsAsFactors = F)
+
+      #
+      # Disp$orig.disp=tmp
+      # ## reset UI elements below
+      # Disp$sight="bird"
+       a=first(index(ExG$freq))
+       b=last(index(ExG$freq))
+      # tmp=downsample(window(Disp$orig.disp,start=a,end=b),250*60)
+       Disp$resol=c(a,b)
+      # ExG$disp=tmp
+      # Disp$newfile=T
+    ExG$stages=data.frame("Sleep State (A, W, S1, S2, S3, REM)"="W",
+                        "Time (xx:xx or xx:xx:xx)"=first(seq(Disp$posix,by=1/ExG$srate,length=nrow(ExG$ts))),
+                        stringsAsFactors = F)
+    graph_data$EEG=findexg(graph_data$nodes,graph_data$edges,1)
+      graph_data$ECG=findexg(graph_data$nodes,graph_data$edges,2)
+      graph_data$EOG=findexg(graph_data$nodes,graph_data$edges,3)
+      graph_data$EMG=findexg(graph_data$nodes,graph_data$edges,4)
+  })
+
+# observeEvent(input$srate,{
+#   ExG$srate=input$srate
+# })
+}
+
+if(shiny_running()){
+observeEvent(input$upload,{
+  showModal(modalDialog(
+    dateInput("rec_date", label="Start Date", value = NULL, min = NULL, max = NULL,
+  format = "yyyy-mm-dd", startview = "month", weekstart = 0,
+  language = "en", width = NULL, autoclose = TRUE,
+  datesdisabled = NULL, daysofweekdisabled = NULL),
+  textInput("rec_time", "Start Time (xx:xx or xx:xx:xx)", value = strftime(Sys.time(), format = "%H:%M"), width = NULL,
+  placeholder = NULL),
+  numericInput("srate","Sampling Frequency",value=250,min=1,max=1000),
+  fileInput("static_data", "Upload Data (EDF/CSV/BIN):", multiple = F, accept = c(".csv",".edf",".BIN"),
+      width = NULL, buttonLabel = "Browse...",
+      placeholder = "No file selected"),
+  renderTable(head(ExG$ts)),size="l"
+  )
+)
+})
+}
+
+```
 
 
 <!-- ### Source & Filter - add edges from channels to biosources, select biosources and apply filter settings -->
