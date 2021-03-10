@@ -20,11 +20,11 @@
 ## 
 golem::fill_desc(
   pkg_name = "Sleep", # The Name of the package containing the App 
-  pkg_title = "PKG_TITLE", # The Title of the package containing the App 
-  pkg_description = "PKG_DESC.", # The Description of the package containing the App 
-  author_first_name = "AUTHOR_FIRST", # Your First Name
-  author_last_name = "AUTHOR_LAST", # Your Last Name
-  author_email = "AUTHOR@MAIL.COM", # Your Email
+  pkg_title = "Sleep", # The Title of the package containing the App 
+  pkg_description = "Adaptive Sleep EEG Analysis.", # The Description of the package containing the App 
+  author_first_name = "Stefan", # Your First Name
+  author_last_name = "Weiss", # Your Last Name
+  author_email = "sweiss@statexpress.com", # Your Email
   repo_url = NULL # The URL of the GitHub Repo (optional) 
 )     
 
