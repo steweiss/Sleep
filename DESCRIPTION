@@ -1,8 +1,8 @@
 Package: Sleep
-Title: PKG_TITLE
+Title: Sleep
 Version: 0.0.0.9000
-Authors@R: person('AUTHOR_FIRST', 'AUTHOR_LAST', email = 'AUTHOR@MAIL.COM', role = c('cre', 'aut'))
-Description: PKG_DESC.
+Authors@R: person('Stefan', 'Weiss', email = 'sweiss@statexpress.com', role = c('cre', 'aut'))
+Description: Adaptive Sleep EEG Analysis.
 License: MIT + file LICENSE
 Imports: 
     config (>= 0.3.1),
@@ -12,11 +12,43 @@ Imports:
     attempt,
     DT,
     glue,
-    htmltools
+    htmltools,
+    flexdashboard,
+    reticulate,
+    plyr,
+    dplyr,
+    ggplot2,
+    knitr,
+    broom,
+    ggfortify,
+    kableExtra,
+    remotes,
+    xts,
+    dlm,
+    forecast,
+    signal,
+    rmarkdown,
+    plotly,
+    visNetwork,
+    cowplot,
+    ggplotify,
+    dygraphs,
+    shinyWidgets,
+    data.table,
+    RHRV,
+    Rssa,
+    tinytex,
+    here,
+    tidyr,
+    shinyTime
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
 Suggests: 
     testthat,
-    spelling
+    spelling,
+    covr
 Language: en-US
+VignetteBuilder: knitr
+URL: https://github.com/steweiss/Sleep
+BugReports: https://github.com/steweiss/Sleep/issues
