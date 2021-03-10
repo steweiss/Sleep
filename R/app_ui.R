@@ -4,13 +4,20 @@
 #'     DO NOT REMOVE.
 #' @import shiny
 #' @noRd
+
+
+library(shiny)
+library(knitr)
+rmdfiles <- c("D:/Users/royde/Nextcloud/Studium/Mathematik/Bachelorarbeit/Sleep/R/Dashboard.Rmd")
+sapply(rmdfiles, knit, quiet = T)
+
 app_ui <- function(request) {
   tagList(
     # Leave this function for adding external resources
     golem_add_external_resources(),
     # Your application UI logic 
     fluidPage(
-      h1("Sleep")
+      withMathJax(includeMarkdown("Dashboard.md"))
     )
   )
 }
