@@ -20,7 +20,7 @@
 ## 
 golem::fill_desc(
   pkg_name = "Sleep", # The Name of the package containing the App 
-  pkg_title = "Sleep", # The Title of the package containing the App 
+  pkg_title = "SleepR", # The Title of the package containing the App 
   pkg_description = "Adaptive Sleep EEG Analysis.", # The Description of the package containing the App 
   author_first_name = "Stefan", # Your First Name
   author_last_name = "Weiss", # Your Last Name
